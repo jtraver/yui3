@@ -2878,7 +2878,7 @@ Y.cached = function (source, cache, refetch) {
         var key = arguments.length > 1 ?
                 Array.prototype.join.call(arguments, CACHED_DELIMITER) :
                 String(arg);
-        
+
         /*jshint eqeqeq: false*/
         if (!(key in cache) || (refetch && cache[key] == refetch)) {
             cache[key] = source.apply(source, arguments);
@@ -3221,8 +3221,8 @@ O.hasKey = owns;
  * as the order in which they were defined.
  *
  * This method is an alias for the native ES5 `Object.keys()` method if
- * available and non-buggy. The Opera 11.50 and Android 2.3.x versions of 
- * `Object.keys()` have an inconsistency as they consider `prototype` to be 
+ * available and non-buggy. The Opera 11.50 and Android 2.3.x versions of
+ * `Object.keys()` have an inconsistency as they consider `prototype` to be
  * enumerable, so a non-native shim is used to rectify the difference.
  *
  * @example
@@ -17235,13 +17235,18 @@ if (config.injected || YUI.Env.windowLoaded) {
 // Process onAvailable/onContentReady items when when the DOM is ready in IE
 if (Y.UA.ie) {
     Y.on(EVENT_READY, Event._poll);
-}
 
-try {
-    add(win, "unload", onUnload);
-} catch(e) {
-    /*jshint maxlen:300*/
-    Y.log("Registering unload listener failed. This is known to happen in Chrome Packaged Apps and Extensions, which don't support unload, and don't provide a way to test for support", "warn", "event-base");
+    // In IE6 and below, detach event handlers when the page is unloaded in
+    // order to try and prevent cross-page memory leaks. This isn't done in
+    // other browsers because a) it's not necessary, and b) it breaks the
+    // back/forward cache.
+    if (Y.UA.ie < 7) {
+        try {
+            add(win, "unload", onUnload);
+        } catch(e) {
+            Y.log("Registering unload listener failed.", "warn", "event-base");
+        }
+    }
 }
 
 Event.Custom = Y.CustomEvent;
@@ -19908,8 +19913,8 @@ Transition.HIDE_TRANSITION = 'fadeOut';
 Transition.useNative = false;
 
 // Map transition properties to vendor-specific versions.
-if ('transition' in DOCUMENT_STYLE 
-    && 'transitionProperty' in DOCUMENT_STYLE 
+if ('transition' in DOCUMENT_STYLE
+    && 'transitionProperty' in DOCUMENT_STYLE
     && 'transitionDuration' in DOCUMENT_STYLE
     && 'transitionTimingFunction' in DOCUMENT_STYLE
     && 'transitionDelay' in DOCUMENT_STYLE) {
