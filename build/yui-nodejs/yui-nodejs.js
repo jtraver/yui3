@@ -195,6 +195,12 @@ available.
                 el.detachEvent('on' + type, fn);
             }
         },
+        handleReady = function() {
+            YUI.Env.DOMReady = true;
+            if (hasWin) {
+                remove(doc, 'DOMContentLoaded', handleReady);
+            }        
+        },
         handleLoad = function() {
             YUI.Env.windowLoaded = true;
             YUI.Env.DOMReady = true;
@@ -1459,11 +1465,14 @@ with any configuration info required for the module.
     YUI._init();
 
     if (hasWin) {
+        add(doc, 'DOMContentLoaded', handleReady);
+
         // add a window load event at load time so we can capture
         // the case where it fires before dynamic loading is
         // complete.
         add(window, 'load', handleLoad);
     } else {
+        handleReady();
         handleLoad();
     }
 
@@ -4703,7 +4712,7 @@ YUI.add('loader-base', function (Y, NAME) {
         BUILD = '/build/',
         ROOT = VERSION + '/',
         CDN_BASE = Y.Env.base,
-        GALLERY_VERSION = 'gallery-2013.10.17-22-20',
+        GALLERY_VERSION = 'gallery-2013.10.24-18-05',
         TNT = '2in3',
         TNT_VERSION = '4',
         YUI2_VERSION = '2.9.0',
